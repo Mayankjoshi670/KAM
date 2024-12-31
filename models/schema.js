@@ -1,0 +1,42 @@
+const tableSchemas = {
+    restaurants: `
+        CREATE TABLE IF NOT EXISTS RESTAURANTS (
+            ID INT PRIMARY KEY AUTO_INCREMENT,
+            NAME VARCHAR(255),
+            ADDRESS VARCHAR(255),
+            STATUS VARCHAR(255),
+            FREQUENCY VARCHAR(255)
+        )AUTO_INCREMENT=100;
+    `,
+    orders: `
+        CREATE TABLE IF NOT EXISTS ORDERS (
+            ID INT PRIMARY KEY AUTO_INCREMENT,
+            RESTAURANT_ID INT,
+            ORDER_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            AMOUNT DECIMAL(10,2),
+            FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID)
+    )AUTO_INCREMENT=100;
+    `,
+    contacts: `
+        CREATE TABLE IF NOT EXISTS CONTACTS (
+            ID INT PRIMARY KEY AUTO_INCREMENT,
+            NAME VARCHAR(255),
+            EMAIL VARCHAR(255),
+            PHONE VARCHAR(255),
+            RESTAURANT_ID INT,
+            ROLE VARCHAR(255),
+            FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID)
+        )AUTO_INCREMENT=100;
+    `,
+    calls: `
+        CREATE TABLE IF NOT EXISTS CALLS (
+            CONTACT_ID INT,
+            CALL_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            RESTAURANT_ID INT,
+            FOREIGN KEY (CONTACT_ID) REFERENCES CONTACTS(ID),
+            FOREIGN KEY (RESTAURANT_ID) REFERENCES RESTAURANTS(ID)
+        );
+    `,
+};
+
+module.exports = tableSchemas;

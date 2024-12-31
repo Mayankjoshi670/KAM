@@ -1,0 +1,21 @@
+{
+  "name": "asign_udan",
+  "version": "1.0.0",
+  "description": "backend project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "index.js",
+    "dev": "nodemon index.js"
+  },
+  "author": "Mayank Joshi",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-async-handler": "^1.2.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.12.0",
+    "nodemon": "^3.1.9"
+  }
+}
