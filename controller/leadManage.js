@@ -45,30 +45,55 @@ const getLeads = asyncHandler(async (req, res) => {
 // @desc delete a Restraunt 
 // @route DELET /api/v1/Restraunts/?:id 
 // @access Public
-
 const deleteLead = asyncHandler(async (req, res) => {
-    const id = req.params.id ; 
-    const query = `DELETE FROM RESTAURANTS WHERE ID = ?` ;
-    conn.query(query , [id] , (err , result)=>{
-        if(err){
-            //  status 500 
-            console.err("error while deleting the restraunt" ,err.message) ;
-            throw new Error("Error while deleting restraunt") ;
-            return ; 
-        }
-        if(result.affectedRows === 0){
-        //    status 404 
-            throw new Error("Restraunt not found") ; 
-        }
-        else {
-            res.status(200).json({
-                message : "Restraunt deleted successfully",
-                data : result
-            })
-        }
-    })
-})
+    const id = req.params.id;
 
+    const deleteCallsQuery = `DELETE FROM calls WHERE RESTAURANT_ID = ?`;
+    const deleteContactsQuery = `DELETE FROM contacts WHERE RESTAURANT_ID = ?`;
+    const deleteOrdersQuery = `DELETE FROM orders WHERE RESTAURANT_ID = ?`;
+    const deleteRestaurantQuery = `DELETE FROM restaurants WHERE ID = ?`;
 
+    // Step 1: Delete from 'calls'
+    conn.query(deleteCallsQuery, [id], (err, result) => {
+        if (err) {
+            console.error("Error while deleting dependent calls:", err.message);
+            throw new Error("Error while deleting dependent calls");
+        }
+        console.log("Dependent calls deleted:", result.affectedRows);
+
+        // Step 2: Delete from 'contacts'
+        conn.query(deleteContactsQuery, [id], (err, result) => {
+            if (err) {
+                console.error("Error while deleting dependent contacts:", err.message);
+                throw new Error("Error while deleting dependent contacts");
+            }
+            console.log("Dependent contacts deleted:", result.affectedRows);
+
+            // Step 3: Delete from 'orders'
+            conn.query(deleteOrdersQuery, [id], (err, result) => {
+                if (err) {
+                    console.error("Error while deleting dependent orders:", err.message);
+                    throw new Error("Error while deleting dependent orders");
+                }
+                console.log("Dependent orders deleted:", result.affectedRows);
+
+                // Step 4: Delete from 'restaurants'
+                conn.query(deleteRestaurantQuery, [id], (err, result) => {
+                    if (err) {
+                        console.error("Error while deleting restaurant:", err.message);
+                        throw new Error("Error while deleting restaurant");
+                    }
+                    if (result.affectedRows === 0) {
+                        throw new Error("Restaurant not found");
+                    }
+                    res.status(200).json({
+                        message: "Restaurant and all dependencies deleted successfully",
+                        data: result,
+                    });
+                });
+            });
+        });
+    });
+});
 
 module.exports = {addLead , getLeads , deleteLead} ;
